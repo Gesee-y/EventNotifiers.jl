@@ -1,7 +1,7 @@
 ---
 Title: ReadMe
+
 Author: Talom Laël
-order: 1
 ...
 
 ##### Notifyers ####
@@ -45,4 +45,4 @@ Also, I am a bit hesitant on letting people create states, since the interface o
 
 ## Bug Report
 
-We know that nothing is perfect in this world, and that is the case for this package so, if there is any bug, improvement you want, or any counter intuitive behaviour (like the `async_all`, `async_oldest` and `async_latest` function that also work in synchronous mode, making their names counter intuitive but that I didn't fix because I think 'async' is way more cool than all the other name I imagined.), let me know at []
+We know that nothing is perfect in this world, and that is the case for this package so, if there is any bug, improvement you want, or any counter intuitive behaviour (like the `async_all`, `async_oldest` and `async_latest` function that also work in synchronous mode, making their names counter intuitive but that I didn't fix because I think 'async' is way more cool than all the other name I imagined.), let me know at [my github](https://github.com/Gesee-y/Notifyers)
