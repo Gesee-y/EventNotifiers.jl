@@ -38,7 +38,7 @@ The 2 main states are `ValueState` and `EmitState`. `ValueState` is a state in w
 
 Let's see an example
 
-```
+```julia
 using Notifyers
 
 @Notifyer Notif(v::Int) # We create the notifyer
