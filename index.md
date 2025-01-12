@@ -61,7 +61,9 @@ We will explain everything
    	 connect(Notif) do v
 		println("We receive $v.")
 	 end
+     ```
 ```
+
 
 Here we connect to the Notifyer `Notif` a function that will be called everytime Notif emit a value.
 	The full syntax of connect is `connect(f::Function,notif::Notifyer;consume=false)`
