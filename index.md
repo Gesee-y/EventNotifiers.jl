@@ -57,19 +57,19 @@ We will explain everything
 
    * `@Notifyer Notif(v::Int)` : We create a new notifyer with the macro syntax (meaning that `Notif` is now a constant in the global scope), We specify that the notifyer should accept a `Int`.
 
-   * ```
+   * ```julia
    	 connect(Notif) do v
 		println("We receive $v.")
 	 end
-	 ```
+```
 
-	Here we connect to the Notifyer `Notif` a function that will be called everytime Notif emit a value.
+Here we connect to the Notifyer `Notif` a function that will be called everytime Notif emit a value.
 	The full syntax of connect is `connect(f::Function,notif::Notifyer;consume=false)`
 	where `consume` indicate if the functiom should be disconnected from the Notifyer after the first emission. this function return a `Listener`
 
    * `Notif.emit = 4` this will call all the function who are listening to Notif with the data `4`, since `Notifyer`s are by default in the emit state, this is the correct syntax to emit the notification. Here is the same example but in the value state.
 
-```
+```julia
 using Notifyers
 
 @Notifyer Notif(v::Int) # We create the notifyer
