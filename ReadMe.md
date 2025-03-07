@@ -53,7 +53,7 @@ I then decide to do the same with Notifyers.
 
 ## Docs
 
-If you want to dive more in the Notifyers, we recommend you to start with the [doc](https://github.com/Gesee-y/Notifyers.jl/blob/main/index.md)
+If you want to dive more in the Notifyers, we recommend you to start with the [doc](https://github.com/Gesee-y/Notifyers.jl/blob/main/docs%2Findex.md)
 
 ## License
 
