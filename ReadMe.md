@@ -43,7 +43,7 @@ While offering comparable performance to two package above, `Notifyer` offer a v
 ## Why states ?
 
 I was thinking after using Reactive and Observable, on a way to get the better of both package since they did approximately the same thing but in different manner.
-While learning graphic programming with OpenGL, I got inspired by, [OpenGL]'s state machine in which the procedure is simple:
+While learning graphic programming with OpenGL, I got inspired by, [OpenGL's state machine](https://www.khronos.org/opengl/wiki/Portal:OpenGL_Concepts) in which the procedure is simple:
 
    * You set a state.
    * You do some operation in this state.
