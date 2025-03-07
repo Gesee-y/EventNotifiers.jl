@@ -27,7 +27,9 @@ In this ecosystem, Notifyer.jl can be seen as a package that provides the better
    * Multiple states to create multiple behaviors (delayed calls, async delayed calls, single task, etc)
    * States can be passed to one Notifyer to another
 
-While offering approximatively the same performance as the two package above, `Notifyer` offer a polyvalent solution to benefit the best of both world. And this solution is **State**
+## Why Notifyers.jl ?
+
+While offering approximatively the same performance as the two package above, `Notifyer` offer a polyvalent solution if you need both synchronous and asynchronous [observer]() in your project.
 
 ## Why states ?
 
