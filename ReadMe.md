@@ -1,11 +1,11 @@
 ---
-Title: ReadMe
+Title: Notifyers.jl
 
 Author: Talom Laël
 Contact : gesee37@gmail.com
 ...
 
-##### Notifyers ####
+# Notifyers.jl
 
 ## Quick start
 
@@ -22,6 +22,12 @@ There are package already addressing that subject like  [Reactive.jl](https://gi
 
 In this ecosystem, Notifyers.jl can be seen as a package that provides the better of both worlds, providing Notifyer, objects relying on states to define their behavior. We may have a synchronous state, asynchronous state, etc. And some states can be mixed together to make unique behaviors.
 
+## Installation 
+
+```julia
+julia> ] add Notifyers
+```
+
 ## Features 
 
    * Intuitive syntax to create Notifyer, inspired from [Godot game engine signals](https://docs.godotengine.org/en/stable/classes/class_signal.html) (`@Notifyer name(arg1::type1,...,argn::typen)`)
@@ -30,7 +36,7 @@ In this ecosystem, Notifyers.jl can be seen as a package that provides the bette
 
 ## Why Notifyers.jl ?
 
-While offering approximatively the same performance as the two package above, `Notifyer` offer a good solution if you need both synchronous and asynchronous [observer](https://www.geeksforgeeks.org/observer-pattern-set-1-introduction/) in your project.
+While offering comparable performance to two package above, `Notifyer` offer a versatile solution if you need both synchronous and asynchronous [observer](https://www.geeksforgeeks.org/observer-pattern-set-1-introduction/) in your project.
 
 ## Why states ?
 
@@ -46,6 +52,10 @@ I then decide to do the same with Notifyers.
 ## Docs
 
 If you want to dive more in the Notifyers, we recommend you to start with the [doc](https://github.com/Gesee-y/Notifyers.jl/blob/main/index.md)
+
+## License
+
+This package is under the MIT license, see [license]() for more info
 
 ## Contribution
 
