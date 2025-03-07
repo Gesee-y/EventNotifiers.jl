@@ -13,7 +13,7 @@ Contact : gesee37@gmail.com
 
 ```julia
 import Pkg
-Pkg.add("Notifyers")
+Pkg.add("https://github.com/Gesee-y/Notifyers.jl.git")
 using Notifyers
 ```
 
