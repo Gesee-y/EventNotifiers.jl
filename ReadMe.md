@@ -44,7 +44,7 @@ While graphic programming with OpenGL, then I got inspired by the [OpenGL] state
 
 I then decide to do the same with Notifyers.
 
-So, if you want to dive more in the Notifyers, we recommend you to start with the [docs]()
+So, if you want to dive more in the Notifyers, we recommend you to start with the [doc](https://github.com/Gesee-y/Notifyers.jl/blob/main/index.md)
 
 ## Contribution
 
