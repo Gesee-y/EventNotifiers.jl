@@ -17,7 +17,7 @@ using Notifyers
 ## Intro
 
 Event-driven system have always been a must in many domain: GUI application, robotics, plotting, etc.
-There are package already addressing that subject like  [Reactive](https://github.com/JuliaGizmos/Reactive.jl) that use asynchronous signals or  [Observables](https://JuliaGizmos.github.io/Observables.jl) that use synchronous Observable.
+There are package already addressing that subject like  [Reactive](https://github.com/JuliaGizmos/Reactive.jl) that use asynchronous signals or  [Observables](https://github.com/JuliaGizmos/Observables.jl) that use synchronous Observable.
 
 In this ecosystem, Notifyer.jl can be seen as a package that provides the better of both world, providing Notifyer, objects relying on states to define their behavior. We may have a synchronous state, asynchronous state, etc. And some states can be mixed together to make unique behaviors.
 
