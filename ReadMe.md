@@ -2,6 +2,7 @@
 Title: Notifyers.jl
 
 Author: Talom Laël
+
 Contact : gesee37@gmail.com
 ...
 
@@ -55,7 +56,7 @@ If you want to dive more in the Notifyers, we recommend you to start with the [d
 
 ## License
 
-This package is under the MIT license, see [license]() for more info
+This package is under the MIT license, see [license](https://github.com/Gesee-y/Notifyers.jl/blob/main/License.txt) for more info
 
 ## Contribution
 
