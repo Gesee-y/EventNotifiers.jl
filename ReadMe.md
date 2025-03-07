@@ -23,13 +23,13 @@ In this ecosystem, Notifyer.jl can be seen as a package that provides the better
 
 ## Features 
 
-   * Intuitive syntax to create Notifyer, inspired from [Godot game engine signals]() (`@Notifyer name(args)`
+   * Intuitive syntax to create Notifyer, inspired from [Godot game engine signals](https://docs.godotengine.org/en/stable/classes/class_signal.html) (`@Notifyer name(args)`)
    * Multiple states to create multiple behaviors (delayed calls, async delayed calls, single task, etc)
    * States can be passed to one Notifyer to another
 
 ## Why Notifyers.jl ?
 
-While offering approximatively the same performance as the two package above, `Notifyer` offer a polyvalent solution if you need both synchronous and asynchronous [observer]() in your project.
+While offering approximatively the same performance as the two package above, `Notifyer` offer a polyvalent solution if you need both synchronous and asynchronous [observer](https://www.geeksforgeeks.org/observer-pattern-set-1-introduction/) in your project.
 
 ## Why states ?
 
