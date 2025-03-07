@@ -48,6 +48,11 @@ So, if you want to dive more in the Notifyers, we recommend you to start with th
 
 ## Contribution
 
+I would greatly appreciate your contribution to the package.
+To do so, just :
+   1. Fork the repository
+   2. Create a feature branch (`git checkout -b feat/new-style`)
+   3. Submit a Pull Request
 
 ## Bug Report
 
