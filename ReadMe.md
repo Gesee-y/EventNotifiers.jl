@@ -57,3 +57,7 @@ To do so, just :
 ## Bug Report
 
 We know that nothing is perfect in this world, and that is the case for this package so, if there is any bug, improvement you want, or any counter intuitive behaviour (like the `async_all`, `async_oldest` and `async_latest` function that also work in synchronous mode, making their names counter intuitive but that I didn't fix because I think 'async' is way more cool than all the other name I imagined.), create an issue at [my github](https://github.com/Gesee-y/Notifyers.jl)
+
+## More
+
+I am from Cameroon at Yaoundé, you can contact me if needed at gesee37@gmail.com
