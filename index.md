@@ -1,4 +1,4 @@
-## Notifyers ##
+# Notifyers
 
 So there you are to know more about the Notifyer package, we will start with the basis
 creating a `Notifyer`.
@@ -104,13 +104,13 @@ async_notif(n::Notifyer)
 ```
 Then you can use the following functions
 
-# {single_task}
+### {single_task}
 ```julia
 single_task(n::Notifyer) # Will tell if the notifyer should call all the listeners in a
 # single task meaning they will be call one after another
 ```
 
-# {multiple_task}
+### {multiple_task}
 ```julia
 multiple_task(n::Notifyer) # Will tell the notifyer to create a task for every listener so
 #they will be called in parallel
@@ -118,14 +118,14 @@ multiple_task(n::Notifyer) # Will tell the notifyer to create a task for every l
 
 ## Multi task state functions
 
-# {wait_all_callback}
+### {wait_all_callback}
 ```julia
 wait_all_callback(n::Notifyer) # Will tell the notifyer to wait for all the listener's task
 #to execute before the current process can continue
 
 ```
 
-# {no_wait}
+### {no_wait}
 ```julia
 no_wait(n::Notifyer) # Will tell the notifyer to not wait for all the task to finish.
 ```
@@ -134,35 +134,35 @@ no_wait(n::Notifyer) # Will tell the notifyer to not wait for all the task to fi
 
 No matter that you are in synchronous or asynchronous state, these function will still be available
 
-# {set_delay}
+### {set_delay}
 ```julia
 set_delay(n::Notifyer,d::Real) # Will create a delay between every listener call, only work
 #in synchronous state or asynchronous state in single task state
 ```
 
-# {no_delay}
+### {no_delay}
 ```julia
 no_delay(n::Notifyer) # Will tell the notifyer to not create a delay between listener calls.
 ```
 
-# {delay_first}
+### {delay_first}
 ```julia
 delay_first(n::Notifyer) # Will tell the notifyer to create a delay beforer the first
 #listener call
 ```
 
-# {async_all}
+### {async_all}
 ```julia
 async_all(n::Notifyer) # Will tell the notifyer to execute all his emission.
 ```
 
-# {async_oldest}
+### {async_oldest}
 ```julia
 async_oldest(n::Notifyer,cnt=1) # Will tell the notifyer to execute only `cnt` first
 #emission, and to reject the other while those one are executing.
 ```
 
-# {async_latest}
+### {async_latest}
 ```julia
 async_latest(n::Notifyer,cnt=1) # Will tell the notifyer to execute only `cnt` last
 #emission, meaning that, if there is many emission in the notifyer channel, it will only
