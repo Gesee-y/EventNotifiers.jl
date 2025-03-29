@@ -7,6 +7,8 @@ Contact : gesee37@gmail.com
 
 ...
 
+---
+
 # Notifyers.jl
 
 ## Quick start
