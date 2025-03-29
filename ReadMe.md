@@ -1,74 +1,69 @@
 ---
-Title: Notifyers.jl
 
-Author: Talom Laël
+Title: Notifyers.jl  
+Author: Talom Laël  
+Contact: gesee37@gmail.com  
 
-Contact : gesee37@gmail.com
-
-...
-
+...  
 ---
 
-# Notifyers.jl
+# Notifyers.jl  
 
-## Quick start
+## Introduction  
 
-```julia
-import Pkg
-Pkg.add("https://github.com/Gesee-y/Notifyers.jl.git")
-using Notifyers
-```
+Event-driven systems are essential in many domains: GUI applications, robotics, plotting, etc. Existing packages like [Reactive.jl](https://github.com/JuliaGizmos/Reactive.jl) (asynchronous signals) and [Observables.jl](https://github.com/JuliaGizmos/Observables.jl) (synchronous observables) address this need.  
 
-## Intro
+**Notifyers.jl** combines the best of both worlds by introducing `Notifyer` objects that rely on **states** to define their behavior. These states (synchronous, asynchronous, etc.) can be mixed to create unique event-handling workflows.  
 
-Event-driven system have always been a must in many domain: GUI application, robotics, plotting, etc.
-There are package already addressing that subject like  [Reactive.jl](https://github.com/JuliaGizmos/Reactive.jl) that use asynchronous signals or  [Observables.jl](https://github.com/JuliaGizmos/Observables.jl) that use synchronous Observable.
+## Installation  
 
-In this ecosystem, Notifyers.jl can be seen as a package that provides the better of both worlds, providing Notifyer, objects relying on states to define their behavior. We may have a synchronous state, asynchronous state, etc. And some states can be mixed together to make unique behaviors.
+For the stable release:  
+```julia  
+julia> ]add Notifyers  
+```  
 
-## Installation 
+For the development version:  
+```julia  
+julia> ]add https://github.com/Gesee-y/Notifyers.jl.git  
+```  
 
-```julia
-julia> ] add Notifyers
-```
+## Features  
 
-## Features 
+- **Intuitive syntax** inspired by [Godot Engine signals](https://docs.godotengine.org/en/stable/classes/class_signal.html):  
+  ```julia  
+  @Notifyer name(arg1::Type1, ..., argn::Typen)  
+  ```  
+- **State-driven behavior**: Define states for delayed calls, async tasks, and more.  
+- **State sharing**: Pass states between `Notifyer` objects.  
 
-   * Intuitive syntax to create Notifyer, inspired from [Godot game engine signals](https://docs.godotengine.org/en/stable/classes/class_signal.html) (`@Notifyer name(arg1::type1,...,argn::typen)`)
-   * Multiple states to create multiple behaviors (delayed calls, async delayed calls, single task, etc)
-   * States can be passed to one Notifyer to another
+## Why Notifyers.jl?  
 
-## Why Notifyers.jl ?
+While matching the performance of similar packages, `Notifyers.jl` provides a **versatile solution** for projects requiring both synchronous and asynchronous [observer patterns](https://www.geeksforgeeks.org/observer-pattern-set-1-introduction/).  
 
-While offering comparable performance to two package above, `Notifyer` offer a versatile solution if you need both synchronous and asynchronous [observer](https://www.geeksforgeeks.org/observer-pattern-set-1-introduction/) in your project.
+## Why States?  
 
-## Why states ?
+After using Reactive.jl and Observables.jl, I sought a way to unify their strengths. Inspired by [OpenGL’s state machine](https://www.khronos.org/opengl/wiki/OpenGL_Context), `Notifyers.jl` adopts a simple workflow:  
 
-I was thinking after using Reactive and Observable, on a way to get the better of both package since they did approximately the same thing but in different manner.
-While learning graphic programming with OpenGL, I got inspired by, [OpenGL's state machine](https://www.khronos.org/opengl/wiki/Portal:OpenGL_Concepts) in which the procedure is simple:
+1. **Set a state**.  
+2. **Perform operations** within that state.  
+3. **Exit the state**.  
 
-   * You set a state.
-   * You do some operation in this state.
-   * You quit the state.
+## Documentation  
 
-I then decide to do the same with Notifyers.
+Explore the full documentation [here](https://github.com/Gesee-y/Notifyers.jl/blob/main/docs/index.md).  
 
-## Docs
+## License  
 
-If you want to dive more in the Notifyers, we recommend you to start with the [doc](https://github.com/Gesee-y/Notifyers.jl/blob/main/docs%2Findex.md)
+MIT License. See [LICENSE](https://github.com/Gesee-y/Notifyers.jl/blob/main/License.txt).  
 
-## License
+## Contributing  
 
-This package is under the MIT license, see [license](https://github.com/Gesee-y/Notifyers.jl/blob/main/License.txt) for more info
+Contributions are welcome!  
 
-## Contribution
+1. [Fork the repository](https://github.com/Gesee-y/Notifyers.jl/fork).  
+2. Create a new branch.  
+3. Submit a Pull Request.  
 
-I would greatly appreciate your contribution to the package.
-To do so, just :
-   1. Fork the repository
-   2. Create a new branch
-   3. Submit a Pull Request
+## Bug Reports  
 
-## Bug Report
-
-We know that nothing is perfect in this world, and that is the case for this package so, if there is any bug, improvement you want, or any counter-intuitive, create an issue at [my github](https://github.com/Gesee-y/Notifyers.jl)
+Found an issue? Report it [here](https://github.com/Gesee-y/Notifyers.jl/issues).  
