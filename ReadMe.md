@@ -1,12 +1,3 @@
----
-
-Title: Notifyers.jl  
-Author: Talom Laël  
-Contact: gesee37@gmail.com  
-
-...  
----
-
 # Notifyers.jl  
 
 ## Introduction  
