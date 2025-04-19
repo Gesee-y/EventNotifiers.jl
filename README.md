@@ -25,7 +25,8 @@ julia> ]add https://github.com/Gesee-y/Notifyers.jl.git
   @Notifyer name(arg1::Type1, ..., argn::Typen)  
   ```  
 - **State-driven behavior**: Define states for delayed calls, async tasks, and more.  
-- **State sharing**: Pass states between `Notifyer` objects.  
+- **State sharing**: Pass states between `Notifyer` objects. 
+- **Parent-child relationship** : A Notifyer can have childrens and propagate his updates to them.
 
 ## Why Notifyers.jl?  
 
