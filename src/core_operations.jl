@@ -157,42 +157,33 @@ An alternative to this function is `notifyer_name.emit = args`.
 If there is no argument, just use `notifyer_name.emit` to update the listeners.
 """
 function emit(notif::Notifyer,@nospecialize(args...))
+	if !isempty(notif.listeners)
+		state = get_state(notif)
 
-	state = get_state(notif)
+		if check_value(notif)
+			notifArgs = getargs(notif)
+			if (length(args) < length(notifArgs))
 
-	if check_value(notif)
-		notifArgs = getargs(notif)
-		if (length(args) < length(notifArgs))
-
-			for i in eachindex(notifArgs)
-				if isa(notifArgs[i],Pair) || typeof(notifArgs[i]) != DataType
-					args = tuple(args...,getvalues(notif)[i:end]...)
-					break
+				for i in eachindex(notifArgs)
+					if isa(notifArgs[i],Pair) || typeof(notifArgs[i]) != DataType
+						args = tuple(args...,getvalues(notif)[i:end]...)
+						break
+					end
 				end
+			end
+
+			if !_signature_matching(notifArgs,args)
+				throw(ArgumentError("Signature does not match. Notifyer accept $(eltype(notif)) but receive $args of type $(typeof.(args))"))
 			end
 		end
 
-		if !_signature_matching(notifArgs,args)
-			throw(ArgumentError("Signature does not match. Notifyer accept $(eltype(notif)) but receive $args of type $(typeof.(args))"))
-		end
-	end
+		notifyer_process(state.mode, notif, args)
+		notify(notif.condition)
+		put!(get_stream(state),EmissionCallback{Listener}(listeners(notif)))
 
-	if is_value_state(notif)
-		if does_ignore_eqvalue(notif)
-			args == notif[] && return
-		end
-
-		setfield!(state.mode, :value, args)
-	end
-
-	notify(notif.condition)
-
-	put!(get_stream(state),EmissionCallback{Listener}(listeners(notif)))
-
-	if is_synchronous(notif)
-		sync_call(notif,state.async,args)
-	elseif is_asynchronous(notif)
-		async_call(notif,state.async,state.emission.task,args)
+		emission_process(state.emission, state.exec, notif, args)
+	else
+		notify(notif.condition)
 	end
 end
 
