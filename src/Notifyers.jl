@@ -5,13 +5,15 @@ module Notifyers
 export AbstractNotifyer,AbstractListener,Notifyer,Listener,@Notifyer
 export connect,disconnect,emit,listeners,getargs
 
+include("..\\..\\StaticObjects.jl\\src\\StaticObjects.jl")
+
 #=
 	First of all we need to have some base structure for our Subject
 	We need it to have a list of his observer so that went a change is commited
 	He signal his observer. We will call the subject "Notifyer"
 =#
 
-const NOTIFYER_CHANNEL_SIZE = 255
+const NOTIFYER_CHANNEL_SIZE = Inf
 
 """
 	abstract type AbstractNotifyer
@@ -58,11 +60,11 @@ This type represent different mode of delay.
 abstract type DelayMode end
 
 """
-	abstract type AsyncMode
+	abstract type ExecMode
 
 This type represent all the way in which calling the listeners will be organized.
 """
-abstract type AsyncMode end
+abstract type ExecMode end
 
 """
 	struct StateMismatch <: Exception
@@ -89,18 +91,18 @@ struct EndEmitting end
 struct EmptyValue end
 
 """
-	struct AsyncAll <: AsyncMode
+	struct ExeccAll <: ExecMode
 
-It's an async mode in which the listeners will be called everytime the notifyer emit.
+It's an exec mode in which the listeners will be called everytime the notifyer emit.
 """
-struct AsyncAll <: AsyncMode end
+struct ExecAll <: ExecMode end
 
 """
-	struct AsyncLatest <: AsyncMode
+	struct ExecLatest <: ExecMode
 
 It's an async mode in which only the last emission of the notifyer will be executed.
 """
-mutable struct AsyncLatest <: AsyncMode 
+mutable struct ExecLatest <: ExecMode 
 	condition :: Condition
 	lck :: ReentrantLock
 	buffer :: Vector{EmissionCallback}
@@ -110,7 +112,7 @@ mutable struct AsyncLatest <: AsyncMode
 
 	## Constructors
 
-	function AsyncLatest(notif::AbstractNotifyer,n=1)
+	function ExecLatest(notif::AbstractNotifyer,n=1)
 		state = get_state(notif)
 		stream = get_stream(state)
 		ec = nothing
@@ -166,12 +168,9 @@ mutable struct AsyncLatest <: AsyncMode
 					end
 				end
 	
-				# If we were in synchronous mode, it's necessary to reset the AsyncLatest object 
+				# If we were in synchronous mode, it's necessary to reset the ExecLatest object 
 				if sync
 					async_latest(notif,n)
-
-					unlock(obj.lck)
-					break
 				else
 					# We just wait for the condition
 					wait(obj.condition)
@@ -185,17 +184,17 @@ mutable struct AsyncLatest <: AsyncMode
 end
 
 """
-	mutable struct AsyncOldest <: AsyncMode
+	mutable struct ExecOldest <: ExecMode
 
 It's an async mode in which only the first emission of the notifyer will be executed and
 the other will be considered only if the first one is finished.
 """
-mutable struct AsyncOldest <: AsyncMode
+mutable struct ExecOldest <: ExecMode
 	running :: Vector{EmissionCallback}
 	count :: Int
 	lck :: ReentrantLock
 
-	AsyncOldest(c::Int=1) = new(EmissionCallback[],c,ReentrantLock())
+	ExecOldest(c::Int=1) = new(EmissionCallback[],c,ReentrantLock())
 end
 
 """
@@ -244,7 +243,7 @@ This struct is used to represent the asynchronous mode of the Notifyer.
 `wait_all` indicate if the current process should wait for all the task to finish before 
 continuing.
 """
-struct AsynchronousState <: EmissionState 
+mutable struct AsynchronousState <: EmissionState 
 	task::TaskMode
 	wait_all::Bool
 
@@ -297,7 +296,7 @@ struct EmitState <: NotifyerState end
 	mutable struct StateData
 		emission :: EmissionState
 		mode :: NotifyerState
-		async :: AsyncMode
+		async :: ExecMode
 		delay :: DelayMode
 		stream :: Channel{EmissionCallback}
 		check :: Bool
@@ -309,7 +308,7 @@ between function calls.
 mutable struct StateData
 	emission :: EmissionState
 	mode :: NotifyerState
-	async :: AsyncMode
+	exec :: ExecMode
 	delay :: DelayMode
 	stream :: Channel{EmissionCallback}
 	check :: Bool
@@ -317,8 +316,8 @@ mutable struct StateData
 	## Constructors ##
 
 	StateData(emission::EmissionState = AsynchronousState(), 
-			mode::NotifyerState = EmitState(), async::AsyncMode = AsyncAll(),
-			delay = NoDelay()) = new(emission, mode, async, delay, 
+			mode::NotifyerState = EmitState(), exec::ExecMode = ExecAll(),
+			delay = NoDelay()) = new(emission, mode, exec, delay, 
 					Channel{EmissionCallback}(NOTIFYER_CHANNEL_SIZE), true)
 end
 
@@ -340,7 +339,8 @@ mutable struct Listener <: AbstractListener
 
 	Listener(f,consume=false;priority=0,value=EmptyValue()) = new(f,consume,priority,value)
 	Listener(l::Listener;priority=0,value=EmptyValue()) = new(l.f,l.consume,priority,value)
-end
+end
+
 
 """
 	struct Notifyer
@@ -496,17 +496,18 @@ end
 function _precompile_notifyer(args::Tuple)
 	data = Tuple{args...}
 	precompile(emit, (Notifyer,args...))
-	precompile(sync_call, (Notifyer, AsyncAll, data))
-	precompile(sync_call, (Notifyer, AsyncOldest, data))
-	precompile(sync_call, (Notifyer, AsyncLatest, data))
-	precompile(async_call, (Notifyer, AsyncAll, MultipleTask, data))
-	precompile(async_call, (Notifyer, AsyncOldest, MultipleTask, data))
-	precompile(async_call, (Notifyer, AsyncLatest, MultipleTask, data))
-	precompile(async_call, (Notifyer, AsyncAll, SingleTask, data))
-	precompile(async_call, (Notifyer, AsyncOldest, SingleTask, data))
-	precompile(async_call, (Notifyer, AsyncLatest, SingleTask, data))
+	precompile(sync_call, (Notifyer, ExecAll, data))
+	precompile(sync_call, (Notifyer, ExecOldest, data))
+	precompile(sync_call, (Notifyer, ExecLatest, data))
+	precompile(async_call, (Notifyer, ExecAll, MultipleTask, data))
+	precompile(async_call, (Notifyer, ExecOldest, MultipleTask, data))
+	precompile(async_call, (Notifyer, ExecLatest, MultipleTask, data))
+	precompile(async_call, (Notifyer, ExecAll, SingleTask, data))
+	precompile(async_call, (Notifyer, ExecOldest, SingleTask, data))
+	precompile(async_call, (Notifyer, ExecLatest, SingleTask, data))
 end
 
+_extract_name_and_argument(s::Symbol) = s,()
 function _extract_name_and_argument(n::Expr)
 	name = n.args[1]
 	args  = n.args[2:end]
