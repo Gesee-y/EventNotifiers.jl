@@ -2,10 +2,13 @@
 
 export get_state, is_synchronous, is_asynchronous, is_single_tasked, is_multi_tasked, is_value_state
 export is_emit_state
-export enable_value, disable_value, async_all, async_oldest, async_latest
+export enable_value, disable_value, exec_all, exec_oldest, exec_latest
 export async_notif, sync_notif, wait_all_callback, no_wait, no_delay, set_delay
 export enable_priority, enable_consume, disable_consume, disable_priority
 export single_task, multiple_task, should_check_value, should_not_check_value
+
+const MAX_SIZE = 1024
+const TaskVector = Vector{Task}(undef,MAX_SIZE)
 
 ## Function relative to delays
 
@@ -17,7 +20,7 @@ create_delay(n::Notifyer, d::NoDelay) = 0
 create_delay(n::Notifyer, d::Delay{N}) where N = (N > 0.5) ? sleep(N) : sleep_ns(N)
 
 _delay_first(n::AbstractNotifyer,d::DelayMode) = nothing
-_delay_first(n::Notifyer,d::NoDelay) = nothing
+_delay_first(n::Notifyer,d::DelayMode) = nothing
 _delay_first(n::Notifyer, d::Delay{N}) where N = d.delay_first && create_delay(n,d)
 
 get_stream(s::StateData) = getfield(s, :stream)
@@ -44,9 +47,9 @@ is_multi_tasked(n::Notifyer) = begin
 	return false
 end
 
-kill_async(m::AsyncLatest) = setfield!(m, :active, false)
-kill_async(m::AsyncOldest) = nothing
-kill_async(m::AsyncAll) = nothing
+kill_exec(m::ExecLatest) = setfield!(m, :active, false)
+kill_exec(m::ExecOldest) = nothing
+kill_exec(m::ExecAll) = nothing
 
 can_consume(t::SingleTask) = getfield(t, :consume)
 can_consume(t::TaskMode) = false
@@ -64,6 +67,26 @@ is_value_state(n::Notifyer) = get_state(n).mode isa ValueState
 is_emit_state(n::Notifyer) = get_state(n).mode isa EmitState
 
 check_value(n::Notifyer) = get_state(n).check
+
+##############################################################################################
+##################################### REFACTOR ZONE ##########################################
+##############################################################################################
+
+get_task_vector() = TaskVector
+
+notifyer_process(::NotifyerState, n::Notifyer, args) = nothing
+function notifyer_process(mode::ValueState, notif::Notifyer, args)
+	
+	if does_ignore_eqvalue(notif)
+		args == notif[] && return
+	end
+
+	setfield!(mode, :value, args)
+end
+
+emission_process(::EmissionState, exec::ExecMode, n::Notifyer, args::Tuple) = nothing
+emission_process(emission::SynchronousState, exec::ExecMode, notif::Notifyer, args::Tuple) = sync_call(notif,exec,args)
+emission_process(emission::AsynchronousState, exec::ExecMode, notif::Notifyer, args::Tuple) = async_call(notif,exec,emission.task,args)
 
 ###############################################################################################
 ###################################### STATE SETTER ###########################################
@@ -101,28 +124,28 @@ function should_not_check_value(n::Notifyer)
 	setfield!(state, :check, false)
 end
 
-function async_all(n::Notifyer)
+function exec_all(n::Notifyer)
 	state = get_state(n)
-	kill_async(state.async)
-	state.async = AsyncAll()
+	kill_exec(state.exec)
+	state.exec = ExecAll()
 end
 
-function async_oldest(n::Notifyer,cnt::Int=1)
+function exec_oldest(n::Notifyer,cnt::Int=1)
 	state = get_state(n)
-	kill_async(state.async)
-	state.async = AsyncOldest(cnt)
+	kill_exec(state.exec)
+	state.exec = ExecOldest(cnt)
 end
 
-function async_latest(notif::Notifyer, n=1)
+function exec_latest(notif::Notifyer, n=1)
 	state = get_state(notif)
-	kill_async(state.async)
-	state.async = AsyncLatest(notif, n)
+	kill_exec(state.exec)
+	state.exec = ExecLatest(notif, n)
 end
 
 Base.reset(n::Notifyer) = reset(get_state(n).async)
-Base.reset(m::AsyncAll) = nothing
-Base.reset(m::AsyncOldest) = (m.running = EmissionCallback[])
-Base.reset(m::AsyncLatest) = (notify(m.condition); m.buffer = EmissionCallback[]; m.data = Tuple[])
+Base.reset(m::ExecAll) = nothing
+Base.reset(m::ExecOldest) = (m.running = EmissionCallback[])
+Base.reset(m::ExecLatest) = (notify(m.condition); m.buffer = EmissionCallback[]; m.data = Tuple[])
 
 function wait_all_callback(n::Notifyer)
 	if is_asynchronous(n)
@@ -185,6 +208,7 @@ function single_task(n::Notifyer)
 	state = get_state(n)
 	if is_asynchronous(n)
 		state.emission.task = SingleTask()
+		return
 	end
 
 	throw(StateMismatch("The Notifyer is not in asynchronous state. use `async_notif(n::Notifyer)` to set it to asynchronous mode."))
@@ -194,6 +218,7 @@ function multiple_task(n::Notifyer)
 	state = get_state(n)
 	if is_asynchronous(n)
 		state.emission.task = MultipleTask()
+		return
 	end
 
 	throw(StateMismatch("The Notifyer is not in asynchronous state. use `async_notif(n::Notifyer)` to set it to asynchronous mode."))
@@ -203,6 +228,7 @@ function enable_priority(n::Notifyer)
 	if is_synchronous(n)
 		state = get_state()
 		state.emission.priority = true
+		return
 	end
 
 	throw(StateMismatch("The Notifyer is not in synchronous state. use `sync_notif(n::Notifyer)` to set to synchronous state."))
@@ -212,6 +238,7 @@ function disable_priority(n::Notifyer)
 	if is_synchronous(n)
 		state = get_state()
 		state.emission.priority = false
+		return
 	end
 
 	throw(StateMismatch("The Notifyer is not in synchronous state. use `sync_notif(n::Notifyer)` to set to synchronous state."))
@@ -221,6 +248,7 @@ function enable_consume(n::Notifyer)
 	if is_synchronous(n)
 		state = get_state()
 		state.emission.consume = true
+		return
 	end
 
 	throw(StateMismatch("The Notifyer is not in synchronous state. use `sync_notif(n::Notifyer)` to set to synchronous state."))
@@ -230,6 +258,7 @@ function disable_consume(n::Notifyer)
 	if is_synchronous(n)
 		state = get_state()
 		state.emission.consume = false
+		return
 	end
 
 	throw(StateMismatch("The Notifyer is not in synchronous state. use `sync_notif(n::Notifyer)` to set to synchronous state."))
@@ -242,7 +271,7 @@ end
 _exec_function(f::Function,args::Tuple) = f(args...)
 _exec_function(l::Listener,args::Tuple) = _exec_function(l.f, args)
 
-function sync_call(n::Notifyer, m::AsyncAll, value::Tuple)
+function sync_call(n::Notifyer, m::ExecAll, value::Tuple)
 	state = get_state(n)
 	stream = get_stream(state)
 
@@ -266,9 +295,7 @@ function sync_call(n::Notifyer, m::AsyncAll, value::Tuple)
 	end
 end
 
-#precompile(sync_call, (Notifyer, AsyncAll, Tuple{Int,Int}))
-
-function sync_call(n::Notifyer, m::AsyncOldest, value::Tuple)
+function sync_call(n::Notifyer, m::ExecOldest, value::Tuple)
 	state = get_state(n)
 	stream = get_stream(state)
 
@@ -306,7 +333,7 @@ function sync_call(n::Notifyer, m::AsyncOldest, value::Tuple)
 	unlock(m.lck)
 end
 
-function sync_call(n::Notifyer, m::AsyncLatest, value::Tuple)
+function sync_call(n::Notifyer, m::ExecLatest, value::Tuple)
 	state = get_state(n)
 	stream = get_stream(state)
 	ec = nothing
@@ -314,21 +341,21 @@ function sync_call(n::Notifyer, m::AsyncLatest, value::Tuple)
 	consume = can_consume(n)
 	delay = state.delay
 
-	# We give the value of the notifyer to the AsyncLatest object
+	# We give the value of the notifyer to the ExecLatest object
 	push!(m.data,value)
 
-	# If the AsyncLatest object is locked
+	# If the ExecLatest object is locked
 	# meaning that his loop has already started
 	if islocked(m.lck)
 
 		# If there is still items in the notifyer channel
 		if isready(stream)
 
-			# Then we notify the AsyncLatest object so that his loop should start again
+			# Then we notify the ExecLatest object so that his loop should start again
 			notify(m.condition)
 		else
 
-			# If there is item in the AsyncLatest buffer, then we assign it to `ec`
+			# If there is item in the ExecLatest buffer, then we assign it to `ec`
 			!isempty(m.buffer) && (ec = popfirst!(m.buffer))
 		end
 	end
@@ -362,12 +389,13 @@ wait_task(v::Vector{Task}) = begin
 	end
 end
 
-_schedule_task(t::Task,wait_all=false) = (errormonitor(schedule(t)); (wait_all && wait_task(t)))
-_schedule_task(v::Vector{Task},wait_all=false) = begin
+_schedule_task(t::Task,wait_all=false,L=0) = (errormonitor(schedule(t)); (wait_all && wait_task(t)))
+_schedule_task(v::Vector,wait_all=false,L::Int=0) = begin
 
 	# We schedule all the task contained in v
-	
-	for tsk in v
+
+	for i = 1:L
+		tsk = v[i]
 		errormonitor(schedule(tsk))
 	end
 
@@ -394,10 +422,10 @@ function create_task(n::Notifyer, ec::EmissionCallback{Listener}, t::SingleTask,
 
 		# for l in listener
 		for l in ec.data
-			result = l.f(value...)
+			result = _exec_function(l.f,value)
 
 			# if consume is enabled and the listener's function return EndEmitting
-			(t.consume && result isa EndEmitting) && break
+			(l.consume && result isa EndEmitting) && break
 
 			# We create a delay(If there should be one)
 			create_delay(n,delay)
@@ -412,17 +440,18 @@ function create_task(n::Notifyer, ec::EmissionCallback, t::MultipleTask, value::
 	# We get the listeners
 	list = ec.data
 
-	vt = Vector{Task}(undef, length(list))
+	vt = get_task_vector()
 	
 	for i in eachindex(list)
-		vt[i] = @task list[i].f(value...)
+		tsk = @task _exec_function(list[i], value)
+		vt[i] = tsk
 	end
 
 	return vt
 end
 
 ## Function relative to asynchronous calls
-function async_call(n::Notifyer, m::AsyncAll, t::TaskMode, value::Tuple)
+function async_call(n::Notifyer, m::ExecAll, t::TaskMode, value::Tuple)
 	
 	# We first get the state object of the notifyer
 	state = get_state(n)
@@ -441,11 +470,11 @@ function async_call(n::Notifyer, m::AsyncAll, t::TaskMode, value::Tuple)
 
 		# And create the task
 		tsk = create_task(n, ec, t, value)
-		_schedule_task(tsk, state.emission.wait_all)
+		_schedule_task(tsk, state.emission.wait_all, length(ec.data))
 	end
 	unlock(lck)
 end
-function async_call(n::Notifyer, m::AsyncOldest, t::TaskMode, value::Tuple)
+function async_call(n::Notifyer, m::ExecOldest, t::TaskMode, value::Tuple)
 	state = get_state(n)
 	stream = get_stream(state)
 	len = length(m.running)
@@ -480,27 +509,27 @@ function async_call(n::Notifyer, m::AsyncOldest, t::TaskMode, value::Tuple)
 	end
 	unlock(m.lck)
 end
-function async_call(n::Notifyer, m::AsyncLatest, t::TaskMode, value::Tuple)
+function async_call(n::Notifyer, m::ExecLatest, t::TaskMode, value::Tuple)
 	state = get_state(n)
 	stream = get_stream(state)
 	ec = nothing
 
-	# If the AsyncLatest object is locked
+	# If the ExecLatest object is locked
 	# meaning that his loop has already started
 	if islocked(m.lck)
 
 		# If there is still items in the notifyer channel
 		if isready(stream)
 
-			# Then we notify the AsyncLatest object so that his loop should start again
+			# Then we notify the ExecLatest object so that his loop should start again
 			notify(m.condition)
 		else
-			# If there is item in the AsyncLatest buffer, then we assign it to `ec`
+			# If there is item in the ExecLatest buffer, then we assign it to `ec`
 			!isempty(m.buffer) && (ec = popfirst!(m.buffer))
 		end
 	end
 
-	# We give the value of the notifyer to the AsyncLatest object
+	# We give the value of the notifyer to the ExecLatest object
 	push!(m.data,value)
 
 	if ec != nothing
