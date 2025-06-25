@@ -5,15 +5,13 @@ module Notifyers
 export AbstractNotifyer,AbstractListener,Notifyer,Listener,@Notifyer
 export connect,disconnect,emit,listeners,getargs
 
-include("..\\..\\StaticObjects.jl\\src\\StaticObjects.jl")
-
 #=
 	First of all we need to have some base structure for our Subject
 	We need it to have a list of his observer so that went a change is commited
 	He signal his observer. We will call the subject "Notifyer"
 =#
 
-const NOTIFYER_CHANNEL_SIZE = Inf
+const NOTIFYER_CHANNEL_SIZE = 255
 
 """
 	abstract type AbstractNotifyer
