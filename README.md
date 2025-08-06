@@ -1,21 +1,21 @@
-# Notifyers.jl  
+# EventNotifiers.jl  
 
 ## Introduction  
 
 Event-driven systems are essential in many domains: GUI applications, robotics, plotting, etc. Existing packages like [Reactive.jl](https://github.com/JuliaGizmos/Reactive.jl) (asynchronous signals) and [Observables.jl](https://github.com/JuliaGizmos/Observables.jl) (synchronous observables) address this need.  
 
-**Notifyers.jl** combines the best of both worlds by introducing `Notifyer` objects that rely on **states** to define their behavior. These states (synchronous, asynchronous, etc.) can be mixed to create unique event-handling workflows.  
+**EventNotifiers.jl** combines the best of both worlds by introducing `Notifyer` objects that rely on **states** to define their behavior. These states (synchronous, asynchronous, etc.) can be mixed to create unique event-handling workflows.  
 
 ## Installation  
 
 For the stable release:  
 ```julia  
-julia> ]add Notifyers  
+julia> ]add EventNotifiers  
 ```  
 
 For the development version:  
 ```julia  
-julia> ]add https://github.com/Gesee-y/Notifyers.jl.git  
+julia> ]add https://github.com/Gesee-y/EventNotifiers.jl.git  
 ```  
 
 ## Features  
@@ -34,7 +34,7 @@ While matching the performance of similar packages, `Notifyers.jl` provides a **
 
 ## Why States?  
 
-After using Reactive.jl and Observables.jl, I sought a way to unify their strengths. Inspired by [OpenGL’s state machine](https://www.khronos.org/opengl/wiki/OpenGL_Context), `Notifyers.jl` adopts a simple workflow:  
+After using Reactive.jl and Observables.jl, I sought a way to unify their strengths. Inspired by [OpenGL’s state machine](https://www.khronos.org/opengl/wiki/OpenGL_Context), `EventNotifiers.jl` adopts a simple workflow:  
 
 1. **Set a state**.  
 2. **Perform operations** within that state.  
@@ -42,20 +42,20 @@ After using Reactive.jl and Observables.jl, I sought a way to unify their streng
 
 ## Documentation  
 
-Explore the full documentation [here](https://github.com/Gesee-y/Notifyers.jl/blob/main/docs/index.md).  
+Explore the full documentation [here](https://github.com/Gesee-y/EventNotifiers.jl/blob/main/docs/index.md).  
 
 ## License  
 
-MIT License. See [LICENSE](https://github.com/Gesee-y/Notifyers.jl/blob/main/License.txt).  
+MIT License. See [LICENSE](https://github.com/Gesee-y/EventNotifiers.jl/blob/main/License.txt).  
 
 ## Contributing  
 
 Contributions are welcome!  
 
-1. [Fork the repository](https://github.com/Gesee-y/Notifyers.jl/fork).  
+1. [Fork the repository](https://github.com/Gesee-y/EventNotifiers.jl/fork).  
 2. Create a new branch.  
 3. Submit a Pull Request.  
 
 ## Bug Reports  
 
-Found an issue? Report it [here](https://github.com/Gesee-y/Notifyers.jl/issues).  
+Found an issue? Report it [here](https://github.com/Gesee-y/EventNotifiers.jl/issues).  
