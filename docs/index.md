@@ -20,9 +20,9 @@ julia>
 ```
 
    * Automatically via:
-   `@Notifyer Notifyer_name(args)`. an example talk more than anything for this one
+   `@Notifyer Notifyer_name(args)`. an example talks more than anything for this one
    `@Notifiyer Testing()`, `@Notifiyer Testing2(x::Int,y::Float64)`, 
-   `@Notifiyer Testing3(x::Int,z=0)`. The variable name `x`, `y` or `z` are just there for intuitiveness but are obligatory.
+   `@Notifiyer Testing3(x::Int,z=0)`. The variable name `x`, `y` or `z` are just there for intuitiveness but are mandatory.
 
    **Note** :
    		Notifyer created via the macro syntax will be created as constant in the global scope. the name of the constant is the same as the Notifyer name.
@@ -147,7 +147,7 @@ no_delay(n::Notifyer) # Will tell the notifyer to not create a delay between lis
 
 ### delay_first
 ```julia
-delay_first(n::Notifyer) # Will tell the notifyer to create a delay beforer the first
+delay_first(n::Notifyer) # Will tell the notifyer to create a delay before the first
 #listener call
 ```
 

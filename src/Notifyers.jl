@@ -5,13 +5,14 @@ module Notifyers
 export AbstractNotifyer,AbstractListener,Notifyer,Listener,@Notifyer
 export connect,disconnect,emit,listeners,getargs
 
+
 #=
 	First of all we need to have some base structure for our Subject
 	We need it to have a list of his observer so that went a change is commited
 	He signal his observer. We will call the subject "Notifyer"
 =#
 
-const NOTIFYER_CHANNEL_SIZE = 255
+const NOTIFYER_CHANNEL_SIZE = 64
 
 """
 	abstract type AbstractNotifyer
@@ -486,9 +487,8 @@ function _create_notifyer(m,data)
 	end
 
 	args = tuple(args...)
-	ex = Expr(:toplevel,m,:(const $(data[1]) = Notifyer($name,$args)))
-	ex2 = Expr(:export,data[1])
-	eval(ex) ; eval(ex2)
+	ex = :(const $(data[1]) = Notifyer($name,$args))
+	m.eval(ex)
 end
 
 function _precompile_notifyer(args::Tuple)

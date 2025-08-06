@@ -17,7 +17,7 @@ end
 
 function sleep_ns(t::Real;sec=true)
 	factor = sec ? 10 ^ 9 : 1
-    t = UInt(Float32(t)*10^9)
+    t = UInt(floor(Float32(t)*10^9))
 
     t1 = time_ns()
     while true
@@ -56,13 +56,13 @@ function timer(t::Real;async=true)
 	notif = Notifyer("Timer",(Real,))
 	sleep_func = t < 0.5 ? sleep : sleep_ns
 
-	f = _ -> begin
+	f = () -> begin
 		delta = @elapsed sleep_func(t)
 		notif.emit = delta
 	end
 
-	if async errormonitor(Threads.@spawn f(1))
-	else f(1)
+	if async errormonitor(Threads.@spawn f())
+	else f()
 	end
 
 	return notif
@@ -83,7 +83,7 @@ julia> count = -1
 julia> begin 
 			throttler = throttle(1)
 
-			@Signal TicTac(d::Real)
+			@Notifyer TicTac(d::Real)
 
 			connect(TicTac) do dt
 				global count += 1

@@ -77,5 +77,19 @@ function folds(f::Function,n::Notifyer;name=" ", typ=(Any,))
 		N[] = f(N[]...,val...)
 	end
 
-	return a
+	return N
+end
+
+function Base.filter(f::Function,n::Notifyer;name=" ", typ=(Any,))
+	N = Notifyer(name,typ; parent = WeakRef[WeakRef(n)])
+
+	enable_value(N)
+
+	connect(n) do val... 
+		if f(val...)
+			N[] = val
+		end
+	end
+
+	return N 
 end
