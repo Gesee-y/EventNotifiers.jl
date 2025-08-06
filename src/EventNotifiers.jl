@@ -1,6 +1,6 @@
 ## Implementation of the observer pattern ##
 
-module Notifyers
+module EventNotifiers
 
 export AbstractNotifyer,AbstractListener,Notifyer,Listener,@Notifyer
 export connect,disconnect,emit,listeners,getargs
@@ -514,5 +514,6 @@ function _extract_name_and_argument(n::Expr)
 end
 
 precompile(Notifyer, (String, Tuple))
+
 
 end #module
