@@ -28,9 +28,9 @@ julia> ]add https://github.com/Gesee-y/EventNotifiers.jl.git
 - **State sharing**: Pass states between `Notifyer` objects. 
 - **Parent-child relationship** : A Notifyer can have childrens and propagate his updates to them.
 
-## Why Notifyers.jl?  
+## Why EventNotifiers.jl?  
 
-While matching the performance of similar packages, `Notifyers.jl` provides a **versatile solution** for projects requiring both synchronous and asynchronous [observer patterns](https://www.geeksforgeeks.org/observer-pattern-set-1-introduction/).  
+While matching the performance of similar packages, `EventNotifiers.jl` provides a **versatile solution** for projects requiring both synchronous and asynchronous [observer patterns](https://www.geeksforgeeks.org/observer-pattern-set-1-introduction/).  
 
 ## Why States?  
 
