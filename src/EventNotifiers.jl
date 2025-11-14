@@ -477,9 +477,9 @@ function _create_notifyer(m,data)
 			if d.args[1] isa Expr
 				v = d.args[2]
 				d = d.args[1]
-				push!(args,Pair{Type,Any}(eval(d.args[2]), v))
+				push!(args,Pair{Type,Any}(m.eval(d.args[2]), v))
 			else
-				push!(args,eval(d.args[2]))
+				push!(args,m.eval(d.args[2]))
 			end
 		else
 			throw(ArgumentError("Failed to create notifyer with the following data $d of type $(typeof(d))."))
