@@ -157,6 +157,7 @@ An alternative to this function is `notifyer_name.emit = args`.
 If there is no argument, just use `notifyer_name.emit` to update the listeners.
 """
 function emit(notif::Notifyer,@nospecialize(args...))
+	
 	if !isempty(notif.listeners)
 		state = get_state(notif)
 
@@ -178,12 +179,16 @@ function emit(notif::Notifyer,@nospecialize(args...))
 		end
 
 		notifyer_process(state.mode, notif, args)
+		lock(notif.lock)
 		notify(notif.condition)
+		unlock(notif.lock)
 		put!(get_stream(state),EmissionCallback{Listener}(listeners(notif)))
 
 		emission_process(state.emission, state.exec, notif, args)
 	else
+		lock(notif.lock)
 		notify(notif.condition)
+		unlock(notif.lock)
 	end
 end
 

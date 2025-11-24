@@ -364,6 +364,7 @@ struct Notifyer <: AbstractNotifyer
 	name :: String
 	id :: Int
 	condition :: Condition
+	lock::ReentrantLock
 
 	args :: Tuple
 	listeners :: Vector{Listener}
@@ -377,7 +378,7 @@ struct Notifyer <: AbstractNotifyer
 	function Notifyer(name::String,args::Tuple=(); state = StateData(),
 			parent = nothing)
 
-		obj = new(name,sum(Int.(collect(name))),Condition(),
+		obj = new(name,sum(Int.(collect(name))),Condition(), ReentrantLock(),
 						args, Listener[], Ref(false), state, parent)
 		_precompile_notifyer(eltype(obj))
 		return obj
